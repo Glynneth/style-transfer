@@ -22,7 +22,7 @@ for path in Path(dir).iterdir():
     if path.is_file() and path.suffix == '.jpg':
         im = Image.open(path)
         im_cropped = crop_max_square(im)
-        f_name = path.name
+        f_name = path.stem
         imResize = im_cropped.resize((200,200), Image.ANTIALIAS)
         imResize.save(out_dir/(f_name + '_resized.jpg'), 'JPEG', quality=90)
 
