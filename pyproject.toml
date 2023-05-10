@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Neural Network to generate an image with the content of one image and the style of another"
 authors = ["glyn-stevens <glynst@gmail.com>"]
 readme = "README.md"
-packages = [{include = "style-transfer"}]
+packages = [{include = "style_transfer"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"

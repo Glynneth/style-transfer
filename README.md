@@ -14,5 +14,8 @@ poetry install
 ```
 to install all packages used.
 
-To generate an image with the content of image1 and a style of image2 ... tbc ...
+To generate an image with the content of image1 and a style of image2 using poetry, run
+```shell
+poetry run python .\src\style-transfer\main.py
+```
 
