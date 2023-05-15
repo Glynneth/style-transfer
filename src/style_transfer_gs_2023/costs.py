@@ -1,36 +1,80 @@
+from typing import List
+
 import tensorflow as tf
 
-from style_transfer_gs_2023.hyperparameters import HYPERPARAMS
+from style_transfer_gs_2023.hyperparameters import HYPERPARAMS, LayerWeight
 
 
 def _content_cost(
-    generated_output: tf.Tensor, content_output: tf.Tensor
+    generated_img_output: tf.Tensor,
+    content_img_output: tf.Tensor,
+    content_layer_idx: int,
 ) -> tf.Tensor:
-    """Compute the content cost"""
-    content = content_output[HYPERPARAMS["content_cost_layer"]]
-    generated = generated_output[HYPERPARAMS["content_cost_layer"]]
-    _, n_H, n_W, n_C = generated.get_shape().as_list()
+    """Compute the content cost of layer defined in hyperparams"""
+    content_a = content_img_output[content_layer_idx]
+    generated_a = generated_img_output[content_layer_idx]
+    _, n_H, n_W, n_C = generated_a.get_shape().as_list()
 
     def unrolled(tensor: tf.Tensor) -> tf.Tensor:
         return tf.reshape(tensor, [-1, n_H * n_W, n_C])
 
     sum_squares = tf.reduce_sum(
-        tf.square(tf.subtract(unrolled(content), unrolled(generated)))
+        tf.square(tf.subtract(unrolled(content_a), unrolled(generated_a)))
     )
     content_cost = 1 / (4 * n_H * n_W * n_C) * sum_squares
     return content_cost
 
 
-def _style_cost(generated_output: tf.Tensor, style_output: tf.Tensor) -> float:
-    return 0
+def _style_cost(
+    generated_img_output: tf.Tensor,
+    style_img_output: tf.Tensor,
+    layers: List[LayerWeight],
+) -> tf.Tensor:
+    """Compute the style cost of layers and weights defined in hyperparams"""
+
+    def layer_cost(layer_idx: int) -> tf.Tensor:
+        generated_layer = generated_img_output[layer_idx]
+        _, n_H, n_W, n_C = generated_layer.get_shape().as_list()
+
+        def reshape(tensor: tf.Tensor) -> tf.Tensor:
+            return tf.reshape(
+                tf.transpose(tensor, perm=[0, 3, 1, 2]), [n_C, n_H * n_W]
+            )
+
+        style = gram_matrix(reshape(style_img_output[layer_idx]))
+        generated = gram_matrix(reshape(generated_layer))
+        factor = 1 / (4 * (n_H * n_W * n_C) ** 2)
+        return factor * tf.reduce_sum(tf.square(tf.subtract(generated, style)))
+
+    weighted_costs = [
+        layer.weight * layer_cost(layer.idx)
+        for layer in layers  # type: ignore
+    ]
+
+    return tf.add_n(weighted_costs)
+
+
+def gram_matrix(input: tf.Tensor) -> tf.Tensor:
+    return tf.linalg.matmul(input, tf.transpose(input))
 
 
 def cost(
-    generated_output: tf.Tensor,
-    content_output: tf.Tensor,
-    style_output: tf.Tensor,
+    generated_img_output: tf.Tensor,
+    content_img_output: tf.Tensor,
+    style_img_output: tf.Tensor,
 ) -> float:
-    total_cost = HYPERPARAMS["alpha"] * _content_cost(
-        generated_output, content_output
-    ) + HYPERPARAMS["beta"] * _style_cost(generated_output, style_output)
-    return total_cost
+    """
+    Compute the total cost of the generated image
+    using content and style weights defined in hyperparams
+    """
+    content_cost = HYPERPARAMS["alpha"] * _content_cost(
+        generated_img_output,
+        content_img_output,
+        HYPERPARAMS["content_cost_layer"],  # type: ignore
+    )
+    style_cost = HYPERPARAMS["beta"] * _style_cost(
+        generated_img_output,
+        style_img_output,
+        HYPERPARAMS["style_cost_layers"],  # type: ignore
+    )
+    return content_cost + style_cost
