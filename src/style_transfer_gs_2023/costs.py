@@ -58,11 +58,11 @@ def _gram_matrix(input: tf.Tensor) -> tf.Tensor:
     return tf.linalg.matmul(input, tf.transpose(input))
 
 
-def cost(
+def total_cost(
     generated_img_output: tf.Tensor,
     content_img_output: tf.Tensor,
     style_img_output: tf.Tensor,
-) -> float:
+) -> tf.Tensor:
     """
     Compute the total cost of the generated image
     using content and style weights defined in hyperparams
