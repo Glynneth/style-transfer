@@ -2,15 +2,15 @@ from typing import List
 
 import tensorflow as tf
 
-from style_transfer_gs_2023.hyperparameters import HYPERPARAMS, LayerWeight
+from style_transfer_gs_2023.hyperparameters import HYPERPARAMS, LayerAndWeight
 
 
 def _content_cost(
     generated_img_output: tf.Tensor,
     content_img_output: tf.Tensor,
-    content_layer_idx: int,
 ) -> tf.Tensor:
     """Compute the content cost of layer defined in hyperparams"""
+    content_layer_idx = -1
     content_a = content_img_output[content_layer_idx]
     generated_a = generated_img_output[content_layer_idx]
     _, n_H, n_W, n_C = generated_a.get_shape().as_list()
@@ -28,7 +28,7 @@ def _content_cost(
 def _style_cost(
     generated_img_output: tf.Tensor,
     style_img_output: tf.Tensor,
-    layers: List[LayerWeight],
+    layers: List[LayerAndWeight],
 ) -> tf.Tensor:
     """Compute the style cost of layers and weights defined in hyperparams"""
 
@@ -47,8 +47,8 @@ def _style_cost(
         return factor * tf.reduce_sum(tf.square(tf.subtract(generated, style)))
 
     weighted_costs = [
-        layer.weight * layer_cost(layer.idx)
-        for layer in layers  # type: ignore
+        layer.weight * layer_cost(idx)
+        for idx, layer in enumerate(layers)  # type: ignore
     ]
 
     return tf.add_n(weighted_costs)
@@ -70,7 +70,6 @@ def cost(
     content_cost = HYPERPARAMS["alpha"] * _content_cost(
         generated_img_output,
         content_img_output,
-        HYPERPARAMS["content_cost_layer"],  # type: ignore
     )
     style_cost = HYPERPARAMS["beta"] * _style_cost(
         generated_img_output,
