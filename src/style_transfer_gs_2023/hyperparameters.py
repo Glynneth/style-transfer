@@ -16,6 +16,7 @@ HYPERPARAMS = {
         LayerAndWeight("block2_conv1", 0.2),
         LayerAndWeight("block3_conv1", 0.2),
         LayerAndWeight("block4_conv1", 0.2),
-        LayerAndWeight("block5_conv1", 0.2)],
-    "initial_noise": 0.25 # fraction of noise to add between 0 and 1
+        LayerAndWeight("block5_conv1", 0.2),
+    ],
+    "initial_noise": 0.25,  # fraction of noise to add between 0 and 1
 }
