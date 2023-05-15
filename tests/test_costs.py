@@ -9,12 +9,8 @@ def test_content_cost():
     tf.random.set_seed(2)
     content_activations = tf.random.normal([1, 1, 4, 4, 3], mean=1, stddev=4)
     generated_activations = tf.random.normal([1, 1, 4, 4, 3], mean=1, stddev=4)
-    J_content = _content_cost(
-        content_activations, generated_activations
-    )
-    J_content_zero = _content_cost(
-        content_activations, content_activations
-    )
+    J_content = _content_cost(content_activations, generated_activations)
+    J_content_zero = _content_cost(content_activations, content_activations)
     assert float(J_content) == approx(7.33876)
     assert float(J_content_zero) == approx(0.0)
 
