@@ -1,4 +1,4 @@
-from PIL import Image  # type: ignore
+from PIL import Image
 
 from style_transfer_gs_2023 import ROOT_PATH
 

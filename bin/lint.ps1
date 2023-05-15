@@ -8,4 +8,4 @@ flake8 src --max-line-length=99
 black -t py310 -l 79 src
 
 "`nmypy:"
-mypy src
+mypy src --ignore-missing-imports --disallow-untyped-defs
