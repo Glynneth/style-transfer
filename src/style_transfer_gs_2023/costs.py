@@ -41,8 +41,8 @@ def _style_cost(
                 tf.transpose(tensor, perm=[0, 3, 1, 2]), [n_C, n_H * n_W]
             )
 
-        style = gram_matrix(reshape(style_img_output[layer_idx]))
-        generated = gram_matrix(reshape(generated_layer))
+        style = _gram_matrix(reshape(style_img_output[layer_idx]))
+        generated = _gram_matrix(reshape(generated_layer))
         factor = 1 / (4 * (n_H * n_W * n_C) ** 2)
         return factor * tf.reduce_sum(tf.square(tf.subtract(generated, style)))
 
@@ -54,7 +54,7 @@ def _style_cost(
     return tf.add_n(weighted_costs)
 
 
-def gram_matrix(input: tf.Tensor) -> tf.Tensor:
+def _gram_matrix(input: tf.Tensor) -> tf.Tensor:
     return tf.linalg.matmul(input, tf.transpose(input))
 
 
