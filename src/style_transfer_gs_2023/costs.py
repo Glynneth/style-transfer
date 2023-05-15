@@ -6,8 +6,9 @@ from style_transfer_gs_2023.hyperparameters import HYPERPARAMS
 def _content_cost(
     generated_output: tf.Tensor, content_output: tf.Tensor
 ) -> tf.Tensor:
-    """Compute the content cost using the activations from the final layer of the model"""
-    content, generated = content_output[-1], generated_output[-1]
+    """Compute the content cost"""
+    content = content_output[HYPERPARAMS["content_cost_layer"]]
+    generated = generated_output[HYPERPARAMS["content_cost_layer"]]
     _, n_H, n_W, n_C = generated.get_shape().as_list()
 
     def unrolled(tensor: tf.Tensor) -> tf.Tensor:
