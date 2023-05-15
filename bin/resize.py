@@ -1,6 +1,7 @@
 #!/usr/bin/python
-from PIL import Image
 from pathlib import Path
+
+from PIL import Image
 
 root_path = Path.cwd()
 dir = root_path / "data" / "original"
