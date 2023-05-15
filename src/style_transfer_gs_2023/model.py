@@ -6,12 +6,12 @@ from tensorflow.python.keras import Model
 from style_transfer_gs_2023.hyperparameters import LayerAndWeight
 
 
-def load_vgg_model(image_size: int) -> Model:
+def load_vgg_model(img_size: int) -> Model:
     tf.random.set_seed(1)
     vgg = tf.keras.applications.VGG19(
         include_top=False,
-        input_shape=(image_size, image_size, 3),
-        weights="pretrained-model/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5",
+        input_shape=(img_size, img_size, 3),
+        weights="imagenet",
     )
     vgg.trainable = False
     return vgg
