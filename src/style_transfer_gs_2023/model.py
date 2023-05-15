@@ -1,5 +1,9 @@
+from typing import List
+
 import tensorflow as tf
 from tensorflow.python.keras import Model
+
+from style_transfer_gs_2023.hyperparameters import LayerAndWeight
 
 
 def load_vgg_model(image_size: int) -> Model:
@@ -11,3 +15,9 @@ def load_vgg_model(image_size: int) -> Model:
     )
     vgg.trainable = False
     return vgg
+
+
+def model_outputs(model: Model, layers: List[LayerAndWeight]) -> tf.Tensor:
+    outputs = [model.get_layer(layer.name).output for layer in layers]
+    model = tf.keras.Model([model.input], outputs)
+    return model
