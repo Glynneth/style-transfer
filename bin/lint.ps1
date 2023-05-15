@@ -11,4 +11,4 @@ flake8 src tests --max-line-length=99
 mypy src --ignore-missing-imports --disallow-untyped-defs
 
 "`nmypy tests:"
-mypy tests --ignore-missing-imports
+mypy tests --ignore-missing-imports --check-untyped-defs
