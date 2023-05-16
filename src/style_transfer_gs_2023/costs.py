@@ -18,10 +18,9 @@ def _content_cost(
     def unrolled(tensor: tf.Tensor) -> tf.Tensor:
         return tf.reshape(tensor, [-1, n_H * n_W, n_C])
 
-    sum_squares = tf.reduce_sum(
+    content_cost = tf.reduce_sum(
         tf.square(tf.subtract(unrolled(content_a), unrolled(generated_a)))
     )
-    content_cost = 1 / (4 * n_H * n_W * n_C) * sum_squares
     return content_cost
 
 
@@ -43,8 +42,7 @@ def _style_cost(
 
         style = _gram_matrix(reshape(style_img_output[layer_idx]))
         generated = _gram_matrix(reshape(generated_layer))
-        factor = 1 / (4 * (n_H * n_W * n_C) ** 2)
-        return factor * tf.reduce_sum(tf.square(tf.subtract(generated, style)))
+        return tf.reduce_sum(tf.square(tf.subtract(generated, style)))
 
     weighted_costs = [
         layer.weight * layer_cost(idx)

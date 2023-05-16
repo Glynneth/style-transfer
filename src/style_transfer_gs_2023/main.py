@@ -21,7 +21,7 @@ def style_transfer() -> None:
     imgs_path = ROOT_PATH / "data" / "resized"
     content_img = tf.constant(load_image(imgs_path / "content_resized.jpg"))
     style_img = tf.constant(
-        load_image(imgs_path / "portrait_arden_resized.jpg")
+        load_image(imgs_path / "Vassily_Kandinsky_1913_-_Composition_7_resized.jpg")
     )
     generated_img = initialise_generated_img(
         content_img, HYPERPARAMS["initial_noise"]  # type: ignore
@@ -48,18 +48,17 @@ def style_transfer() -> None:
         return cost
 
     epochs = HYPERPARAMS["epochs"]
-    num_outputs = HYPERPARAMS["num_output_imgs"]
-    output_iters = [epochs // x for x in range(1, num_outputs + 1)]
+    steps_per_epoch = HYPERPARAMS["steps_per_epoch"]
     start = time()
-    for i in range(epochs):
-        train_step(generated_img)
-        if i in output_iters:
-            print(f"Iteration {i} out of {epochs}. {math.floor(time()-start)}s")
-            image = to_image(generated_img)
-            image.save(
-                guarenteed_directory(ROOT_PATH / "output")
-                / timestamp(f"output_steps_{i}.jpg", start)
-            )
+    for e in range(epochs):
+        for i in range(steps_per_epoch):
+            train_step(generated_img)
+        print(f"Step {e*steps_per_epoch} out of {epochs*steps_per_epoch}. {math.floor(time()-start)}s")
+        image = to_image(generated_img)
+        image.save(
+            guarenteed_directory(ROOT_PATH / "output")
+            / timestamp(f"output_steps_{i}.jpg", start)
+        )
 
 
 def initialise_generated_img(
