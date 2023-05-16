@@ -1,4 +1,7 @@
+import math
+import os
 from pathlib import Path
+from time import time
 from typing import Any
 
 import numpy as np
@@ -24,3 +27,10 @@ def to_image(tensor: tf.Tensor) -> Image:
     """Convert tensor of shape (1, x, x, 3) to an image"""
     tensor = np.array(tensor * 255, dtype=np.uint8)
     return Image.fromarray(tensor[0])
+
+
+def timestamp(string: str, start_time: float) -> str:
+    """Timestamp a file name with seconds since the start time"""
+    base, extension = os.path.splitext(string)
+    timestamp = math.floor(time() - start_time)
+    return f"{base}_{timestamp}{extension}"
