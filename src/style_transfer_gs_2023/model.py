@@ -17,7 +17,7 @@ def load_vgg_model(img_size: int) -> Model:
     return vgg
 
 
-def model_outputs(model: Model, layers: List[LayerAndWeight]) -> tf.Tensor:
+def model_outputs(model: Model, layers: List[LayerAndWeight]) -> Model:
     outputs = [model.get_layer(layer.name).output for layer in layers]
     model = tf.keras.Model([model.input], outputs)
     return model
