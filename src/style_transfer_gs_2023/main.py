@@ -42,6 +42,7 @@ def style_transfer() -> None:
         with tf.GradientTape() as tape:
             generated_output = output_layers(generated_image)
             cost = total_cost(generated_output, content_out, style_out)
+            cost += HYPERPARAMS["total_variation_weight"]*tf.image.total_variation(generated_image)
         grad = tape.gradient(cost, generated_image)
         optimizer.apply_gradients([(grad, generated_image)])
         generated_image.assign(clip(generated_image))
