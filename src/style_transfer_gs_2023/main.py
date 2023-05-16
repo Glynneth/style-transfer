@@ -1,3 +1,5 @@
+import math
+from time import time
 from typing import List
 
 import tensorflow as tf
@@ -10,6 +12,7 @@ from style_transfer_gs_2023.utils import (
     clip,
     guarenteed_directory,
     load_image,
+    timestamp,
     to_image,
 )
 
@@ -32,7 +35,7 @@ def style_transfer() -> None:
     style_out = output_layers(
         tf.Variable(tf.image.convert_image_dtype(style_img, tf.float32))
     )
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=HYPERPARAMS["learning_rate"], beta_1=0.99, epsilon=1e-1)
 
     @tf.function()
     def train_step(generated_image: tf.Variable) -> tf.Tensor:
@@ -44,14 +47,19 @@ def style_transfer() -> None:
         generated_image.assign(clip(generated_image))
         return cost
 
-    epochs = 2
-    for _ in range(epochs):
+    epochs = HYPERPARAMS["epochs"]
+    num_outputs = HYPERPARAMS["num_output_imgs"]
+    output_iters = [epochs // x for x in range(1, num_outputs + 1)]
+    start = time()
+    for i in range(epochs):
         train_step(generated_img)
-    image = to_image(generated_img)
-    image.save(
-        guarenteed_directory(ROOT_PATH / "output")
-        / f"output_epochs_{epochs}.jpg"
-    )
+        if i in output_iters:
+            print(f"Iteration {i} out of {epochs}. {math.floor(time()-start)}s")
+            image = to_image(generated_img)
+            image.save(
+                guarenteed_directory(ROOT_PATH / "output")
+                / timestamp(f"output_steps_{i}.jpg", start)
+            )
 
 
 def initialise_generated_img(
