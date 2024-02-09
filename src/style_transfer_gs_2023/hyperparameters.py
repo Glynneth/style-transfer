@@ -21,6 +21,6 @@ HYPERPARAMS = {
     ],
     "initial_noise": 0.25,  # fraction of noise to add between 0 and 1
     "epochs": 10,
-    "steps_per_epoch": 30,
+    "steps_per_epoch": 100,
     "learning_rate": 0.02
 }
