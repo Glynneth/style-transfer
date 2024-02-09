@@ -21,7 +21,7 @@ def style_transfer() -> None:
     imgs_path = ROOT_PATH / "data" / "resized"
     content_img = tf.constant(load_image(imgs_path / "content_resized.jpg"))
     style_img = tf.constant(
-        load_image(imgs_path / "Vassily_Kandinsky_1913_-_Composition_7_resized.jpg")
+        load_image(imgs_path / "portrait_self_1_resized.jpg")
     )
     generated_img = initialise_generated_img(
         content_img, HYPERPARAMS["initial_noise"]  # type: ignore
@@ -58,7 +58,7 @@ def style_transfer() -> None:
         image = to_image(generated_img)
         image.save(
             guarenteed_directory(ROOT_PATH / "output")
-            / timestamp(f"output_steps_{i}.jpg", start)
+            / timestamp(f"self_portrait_steps_{e*steps_per_epoch}.jpg", start)
         )
 
 

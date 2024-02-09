@@ -33,4 +33,4 @@ def timestamp(string: str, start_time: float) -> str:
     """Timestamp a file name with seconds since the start time"""
     base, extension = os.path.splitext(string)
     timestamp = math.floor(time() - start_time)
-    return f"{base}_{timestamp}{extension}"
+    return f"{base}_{timestamp}s{extension}"
